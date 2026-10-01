@@ -1,0 +1,33 @@
+flowchart TD
+    subgraph Floor["Factory floor"]
+        A["Supervisor voice note or text<br/>Urdu, Roman Urdu or English<br/>WhatsApp or web app"]
+    end
+
+    A --> N["n8n webhook<br/>receives the message"]
+    N --> API["AwaazOps backend<br/>FastAPI"]
+    API --> W["Speech-to-text<br/>Whisper large-v3, open-source"]
+    W --> X["Event extractor agent<br/>GPT-OSS open-weight LLM"]
+    X --> V{"Pydantic validation<br/>event type, order, truck, cartons, confidence"}
+    V -- "invalid twice or<br/>confidence below 70%" --> R["Human approval queue<br/>supervisor approves or rejects"]
+    R -- "approved" --> RULES
+    V -- "valid and confident" --> RULES{"Business rules engine<br/>checks event against the order"}
+    RULES --> DB[("PostgreSQL<br/>orders, events, alerts")]
+    RULES -- "short dispatch, over-load,<br/>delay, damage, unknown order" --> AL["Alert agent<br/>Slack / WhatsApp to manager"]
+
+    subgraph Mgmt["Management"]
+        D["Control tower dashboard<br/>order status: on track, at risk, late, dispatched"]
+        B["Shift briefing agent<br/>top risks + next action per order"]
+        Q["Ask your data<br/>question in English or Urdu"]
+    end
+
+    DB --> D
+    DB --> B
+    Q --> SQL["Text-to-SQL agent<br/>LLM writes SELECT query"]
+    SQL --> G{"SQL guardrail<br/>single read-only SELECT only"}
+    G -- "blocked" --> Q
+    G -- "safe" --> DB
+    DB --> ANS["LLM summarizes results<br/>in plain language"]
+    ANS --> Q
+
+    EV["Evaluation set<br/>20 labelled Urdu / English messages"] --> X
+    X --> LOG[("Monitoring<br/>extraction accuracy, latency, cost")]

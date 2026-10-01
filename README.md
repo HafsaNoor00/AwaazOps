@@ -2,7 +2,7 @@
 
 A voice-first control tower for factory loading and dispatch. Floor supervisors send quick voice notes or messages in Urdu, Roman Urdu or English ("Truck 4 mein order 551 ke 300 carton load ho gaye"). AwaazOps turns them into structured events, checks each one against the order, alerts managers about problems (short dispatches, over-loading, delays, damage), and lets managers ask questions about their operations in plain language.
 
-**Live demo:** _add your Streamlit link here_ · login `App` / `APP123`
+**Live demo:** _add your Streamlit link here_ · login `APP` / `APP123`
 
 ## How it works
 1. **Speech to text:** Whisper large-v3 (open-source) transcribes the voice note.
